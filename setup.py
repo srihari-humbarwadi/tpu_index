@@ -4,11 +4,11 @@ with open('README.md', 'r') as f:
     long_description = f.read()
 
 setuptools.setup(
-    name='TPUIndex',
+    name='tpu_index',
     version='0.0.1',
     author='Text2Vec Team',
     author_email='',
-    description='TPUIndex is a package for fast similarity search over large collections of high dimension vectors on TPUs',
+    description='tpu_index is a package for fast similarity search over large collections of high dimension vectors on TPUs',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/srihari-humbarwadi/TPUIndex',
