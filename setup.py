@@ -11,7 +11,7 @@ setuptools.setup(
     description='tpu_index is a package for fast similarity search over large collections of high dimension vectors on TPUs',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/srihari-humbarwadi/TPUIndex',
+    url='https://github.com/srihari-humbarwadi/tpu_index',
     packages=setuptools.find_packages(),
     install_requires=['tensorflow>=2.0.0'],
     classifiers=[
