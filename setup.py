@@ -5,9 +5,9 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name='tpu_index',
-    version='0.0.1',
-    author='Text2Vec Team',
-    author_email='',
+    version='0.0.2',
+    author='',
+    author_email='sriharihumbarwadi97@gmail.com',
     description='tpu_index is a package for fast similarity search over large collections of high dimension vectors on TPUs',
     long_description=long_description,
     long_description_content_type='text/markdown',
