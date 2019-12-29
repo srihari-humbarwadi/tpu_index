@@ -7,15 +7,15 @@ Link to our project: https://devpost.com/software/naturallanguagerecommendations
 
 
 ### Installation
-`!pip install tpu_index`
+`!pip install tpu-index`
 
 
 ### Basic usage
 ```
-from TPUIndex.index import TPUIndex
+from tpu_index import TPUIndex
 
 index = TPUIndex(num_tpu_cores=8)
-index.create_index(<vectors>)  # vectors.shape == [None, None]
+index.create_index(vectors)  # vectors = numpy array, shape == [None, None]
 
 ...
 D, I = index.search(xq, distance_metric='cosine', top_k=5)

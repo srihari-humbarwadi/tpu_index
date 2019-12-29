@@ -4,7 +4,7 @@ with open('README.md', 'r') as f:
     long_description = f.read()
 
 setuptools.setup(
-    name='tpu_index',
+    name='tpu-index',
     version='0.0.2',
     author='',
     author_email='sriharihumbarwadi97@gmail.com',
