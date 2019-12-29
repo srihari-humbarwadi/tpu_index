@@ -26,7 +26,7 @@ class Index:
             sorted_indices = tf.argsort(distances)
             nearest_distances = tf.gather(distances, sorted_indices)
             return nearest_distances[:top_k], sorted_indices[:top_k]
-        # ToDo: Add search using L2 distance
+        # ToDo: Add search using other distance metrics
 
 
 class TPUIndex:
@@ -38,9 +38,8 @@ class TPUIndex:
 
     def create_index(self, vectors, normalize=True):
         self.vectors = vectors
-        if normalize:
-            self.normalized_vectors = True
-            self.vectors = tf.math.l2_normalize(self.vectors, axis=1)
+        self.normalized_vectors = normalize
+
         drop = self.vectors.shape[0] % len(self.workers)
         self.vecs_per_index = self.vectors.shape[0] // len(self.workers)
         self.vectors = self.vectors[:-drop]
@@ -49,21 +48,26 @@ class TPUIndex:
         for i in range(len(self.workers)):
             worker = self.workers[i]
             with tf.device(worker):
-                self.indices[i] = Index(self.vectors[i], worker)
+                vecs = self.vectors[i]
+                if self.normalized_vectors:
+                    vecs = tf.math.l2_normalize(vecs, axis=1)
+                self.indices[i] = Index(vecs, worker)
 
     def search(self, xq, distance_metric='cosine', top_k=10):
         dims = xq.shape
+
         assert len(dims) == 2, \
             '''Expected query_vector to have 2 dimesions but
-             found {}'''.format(len(dims))
+               found {}'''.format(len(dims))
+
         assert dims[0] == 1, \
             '''Expected query_vector to have shape == [1, None]
-             but got'''.format(dims)
+               but got'''.format(dims)
 
         if distance_metric == 'cosine':
             assert self.normalized_vectors, \
                 '''Currently only normalized vectors are supported
-                 for searching with cosine distances'''
+                   for searching with cosine distances'''
 
         Dx, Ix = [], []
         for i in range(len(self.workers)):
@@ -72,7 +76,7 @@ class TPUIndex:
             Dx.extend(d.numpy())
             Ix.extend(i * self.vecs_per_index + idx.numpy())
 
-        # ToDo: Dont sorted again, merge the already sorted distances
+        # ToDo: Dont sort again, merge the already sorted distance arrays
         id_sorted = np.argsort(Dx)[:top_k]
         Dx = np.array(Dx)[id_sorted]
         Ix = np.array(Ix)[id_sorted]
