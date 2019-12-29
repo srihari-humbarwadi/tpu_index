@@ -2,6 +2,7 @@
 
 TPU Index is a package for fast similarity search over large collections of high dimension vectors on TPUs.
 This package was built to support our project that we developed for https://tfworld.devpost.com/.
+
 Link to our project: https://devpost.com/software/naturallanguagerecommendations
 
 
