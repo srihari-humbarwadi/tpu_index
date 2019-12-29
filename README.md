@@ -1,3 +1,5 @@
+[![HitCount](http://hits.dwyl.io/srihari-humbarwadi/tpu_index.svg)](http://hits.dwyl.io/srihari-humbarwadi/tpu_index)
+
 ## TPU Index
 
 TPU Index is a package for fast similarity search over large collections of high dimension vectors on TPUs.
