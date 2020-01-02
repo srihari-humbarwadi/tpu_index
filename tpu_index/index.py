@@ -13,6 +13,7 @@ except ValueError:
 class Index:
     def __init__(self, vectors, worker):
         self.vectors = vectors
+        self.embeddings = tf.cast(self.vectors, dtype=tf.bfloat16)
         self.worker = worker
         print('Building index with {} vectors on {}'.format(
             vectors.shape[0], worker))
@@ -24,7 +25,7 @@ class Index:
                 self.vectors, query_vector), axis=1)
             distances = 1 - dot_product
             sorted_indices = tf.argsort(distances)
-            nearest_distances = tf.gather(distances, sorted_indices)
+            nearest_distances = tf.cast(tf.gather(distances, sorted_indices), dtype=tf.float32)
             return nearest_distances[:top_k], sorted_indices[:top_k]
         # ToDo: Add search using other distance metrics
 
