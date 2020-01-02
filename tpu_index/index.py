@@ -56,13 +56,14 @@ class TPUIndex:
 
     def search(self, xq, distance_metric='cosine', top_k=10):
         dims = xq.shape
-
+        xq = tf.cast(xq, dtype=tf.bfloat16)
+        
         assert len(dims) == 2, \
-            '''Expected query_vector to have 2 dimesions but
+            '''Expected xq to have 2 dimesions but
                found {}'''.format(len(dims))
 
         assert dims[0] == 1, \
-            '''Expected query_vector to have shape == [1, None]
+            '''Expected xq to have shape == [1, None]
                but got'''.format(dims)
 
         if distance_metric == 'cosine':
