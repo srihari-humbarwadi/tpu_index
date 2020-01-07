@@ -38,18 +38,17 @@ class TPUIndex:
         self.normalized_vectors = False
 
     def create_index(self, vectors, normalize=True):
-        self.vectors = vectors
         self.normalized_vectors = normalize
+        self.vecs_per_index = vectors.shape[0] // len(self.workers)
 
-        drop = self.vectors.shape[0] % len(self.workers)
-        self.vecs_per_index = self.vectors.shape[0] // len(self.workers)
-        self.vectors = self.vectors[:-drop]
-        self.vectors = np.split(self.vectors, len(self.workers), axis=0)
+        drop = vectors.shape[0] % len(self.workers)
+        vectors = vectors[:-drop]
+        vectors = np.split(vectors, len(self.workers), axis=0)
 
         for i in range(len(self.workers)):
             worker = self.workers[i]
             with tf.device(worker):
-                vecs = self.vectors[i]
+                vecs = vectors[i]
                 if self.normalized_vectors:
                     vecs = tf.math.l2_normalize(vecs, axis=1)
                 self.indices[i] = Index(vecs, worker)
