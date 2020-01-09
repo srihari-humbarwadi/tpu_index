@@ -54,7 +54,7 @@ class TPUIndex:
         numToAdd = vectors.shape[0] % len(self.workers)
         if numToAdd > 0:
             toAddZeros = np.zeros_like(vectors[-numToAdd:])
-        vectors = np.concatenate((vectors, toAddZeros), axis=0)
+            vectors = np.concatenate((vectors, toAddZeros), axis=0)
         vectors = np.split(vectors, len(self.workers), axis=0)
 
         for i in range(len(self.workers)):
@@ -76,8 +76,7 @@ class TPUIndex:
         print(3)
         if numToAdd > 0:
             toAddZeros = tf.zeros_like(vectors[-numToAdd:])
-        print(4)
-        vectors = tf.concat((vectors, toAddZeros), axis=0)
+            vectors = tf.concat((vectors, toAddZeros), axis=0)
         print(5)
         vectors = np.split(vectors, len(self.workers), axis=0)
         print(6)
