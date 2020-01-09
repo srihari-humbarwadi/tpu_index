@@ -64,7 +64,7 @@ class TPUIndex:
 
     def append_index(self, vectors, normalize=True):
         self.normalized_vectors = normalize
-        self.vecs_per_index = self.vecs_per_index + vectors.shape[0] // len(self.workers)
+        self.vecs_per_index = self.vecs_per_index + (vectors.shape[0] // len(self.workers))
 
         numToAdd = vectors.shape[0] % len(self.workers)
         toAddZeros = tf.zeros_like(vectors[-numToAdd:])
