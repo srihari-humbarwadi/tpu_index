@@ -63,6 +63,7 @@ class TPUIndex:
                 if self.normalized_vectors:
                     vecs = tf.math.l2_normalize(vecs, axis=1)
                 self.indices[i] = Index(vecs, worker)
+        print(0)
 
     def append_index(self, vectors, normalize=True):
         print(1)
