@@ -12,22 +12,28 @@ except ValueError:
 
 class Index:
     def __init__(self, vectors, worker):
-        self.vectors = vectors
-        self.embeddings = tf.cast(self.vectors, dtype=tf.bfloat16)
+        vectors
+        self.embeddings = tf.cast(vectors, dtype=tf.bfloat16)
         self.worker = worker
         print('Building index with {} vectors on {}'.format(
             vectors.shape[0], worker))
+        
+    def appendEmbeds(self, vectors):
+        newEmbeds = tf.cast(vectors, dtype=tf.bfloat16)
+        self.embeddings = tf.concat((self.embeddings, newEmbeds), axis=0)
 
     @tf.function
     def search(self, query_vector, top_k=20):
         with tf.device(self.worker):
             dot_product = tf.reduce_sum(tf.multiply(
-                self.vectors, query_vector), axis=1)
+                self.embeddings, query_vector), axis=1)
             distances = 1 - dot_product
             sorted_indices = tf.argsort(distances)
             nearest_distances = tf.cast(tf.gather(distances, sorted_indices), dtype=tf.float32)
             return nearest_distances[:top_k], sorted_indices[:top_k]
         # ToDo: Add search using other distance metrics
+
+
 
 
 class TPUIndex:
@@ -38,21 +44,38 @@ class TPUIndex:
         self.normalized_vectors = False
 
     def create_index(self, vectors, normalize=True):
-        self.vectors = vectors
         self.normalized_vectors = normalize
+        self.vecs_per_index = vectors.shape[0] // len(self.workers)
 
-        drop = self.vectors.shape[0] % len(self.workers)
-        self.vecs_per_index = self.vectors.shape[0] // len(self.workers)
-        self.vectors = self.vectors[:-drop]
-        self.vectors = np.split(self.vectors, len(self.workers), axis=0)
+        numToAdd = vectors.shape[0] % len(self.workers)
+        toAddZeros = np.zeros_like(vectors[-numToAdd:])
+        vectors = np.concatenate((vectors, toAddZeros), axis=0)
+        vectors = np.split(vectors, len(self.workers), axis=0)
 
         for i in range(len(self.workers)):
             worker = self.workers[i]
             with tf.device(worker):
-                vecs = self.vectors[i]
+                vecs = vectors[i]
                 if self.normalized_vectors:
                     vecs = tf.math.l2_normalize(vecs, axis=1)
                 self.indices[i] = Index(vecs, worker)
+
+    def append_index(self, vectos, normalize=True):
+        self.normalized_vectors = normalize
+        self.vecs_per_index = self.vecs_per_index + vectors.shape[0] // len(self.workers)
+
+        numToAdd = vectors.shape[0] % len(self.workers)
+        toAddZeros = tf.zeros_like(vectors[-numToAdd:])
+        vectors = tf.concat((vectors, toAddZeros), axis=0)
+        vectors = np.split(vectors, len(self.workers), axis=0)
+
+        for i in range(len(self.workers)):
+            worker = self.workers[i]
+            with tf.device(worker):
+                vecs = vectors[i]
+                if self.normalized_vectors:
+                    vecs = tf.math.l2_normalize(vecs, axis=1)
+                self.indices[i].appendEmbeds(vecs)
 
     def search(self, xq, distance_metric='cosine', top_k=10):
         dims = xq.shape
