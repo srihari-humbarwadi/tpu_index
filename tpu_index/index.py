@@ -19,9 +19,12 @@ class Index:
         
     def appendEmbeds(self, vectorsN):
         vectorsN = tf.cast(vectorsN, dtype=tf.bfloat16)
+        print(14)
         self.vectors = tf.concat((self.vectors, vectorsN), axis=0)
+        print(15)
         print('Index now has {} vectors on {}'.format(
             self.vectors.shape[0], worker))
+        print(16)
 
     @tf.function
     def search(self, query_vector, top_k=20):
@@ -62,21 +65,33 @@ class TPUIndex:
                 self.indices[i] = Index(vecs, worker)
 
     def append_index(self, vectors, normalize=True):
+        print(1)
         self.normalized_vectors = normalize
         self.vecs_per_index = self.vecs_per_index + (vectors.shape[0] // len(self.workers))
+        print(2)
 
         numToAdd = vectors.shape[0] % len(self.workers)
+        print(3)
         toAddZeros = tf.zeros_like(vectors[-numToAdd:])
+        print(4)
         vectors = tf.concat((vectors, toAddZeros), axis=0)
+        print(5)
         vectors = np.split(vectors, len(self.workers), axis=0)
+        print(6)
 
         for i in range(len(self.workers)):
+            print(7)
             worker = self.workers[i]
             with tf.device(worker):
+                print(8)
                 vecs = vectors[i]
+                print(9)
                 if self.normalized_vectors:
+                    print(11)
                     vecs = tf.math.l2_normalize(vecs, axis=1)
+                    print(12)
                 self.indices[i].appendEmbeds(vecs)
+                print(13)
 
     def search(self, xq, distance_metric='cosine', top_k=10):
         dims = xq.shape
