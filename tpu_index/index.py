@@ -23,7 +23,7 @@ class Index:
         self.vectors = tf.concat((self.vectors, vectorsN), axis=0)
         print(15)
         print('Index now has {} vectors on {}'.format(
-            self.vectors.shape[0], worker))
+            self.vectors.shape[0], self.worker))
         print(16)
 
     @tf.function
