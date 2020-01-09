@@ -62,19 +62,19 @@ class TPUIndex:
                     vecs = tf.math.l2_normalize(vecs, axis=1)
                 self.indices[i] = Index(vecs, worker)
 
-    def append_index(self, vectors, normalize=True):
+    def append_index(self, vectorsN, normalize=True):
         self.normalized_vectors = normalize
-        self.vecs_per_index = self.vecs_per_index + (vectors.shape[0] // len(self.workers))
+        self.vecs_per_index = self.vecs_per_index + (vectorsN.shape[0] // len(self.workers))
 
-        numToAdd = vectors.shape[0] % len(self.workers)
-        toAddZeros = tf.zeros_like(vectors[-numToAdd:])
-        vectors = tf.concat((vectors, toAddZeros), axis=0)
-        vectors = np.split(vectors, len(self.workers), axis=0)
+        numToAdd = vectorsN.shape[0] % len(self.workers)
+        toAddZeros = tf.zeros_like(vectorsN[-numToAdd:])
+        vectorsN = tf.concat((vectorsN, toAddZeros), axis=0)
+        vectorsN = np.split(vectorsN, len(self.workers), axis=0)
 
         for i in range(len(self.workers)):
             worker = self.workers[i]
             with tf.device(worker):
-                vecs = vectors[i]
+                vecs = vectorsN[i]
                 if self.normalized_vectors:
                     vecs = tf.math.l2_normalize(vecs, axis=1)
                 self.indices[i].appendEmbeds(vecs)
