@@ -18,13 +18,14 @@ class Index:
             self.vectors.shape[0], worker))
         
     def appendEmbeds(self, vectorsN):
-        vectorsN = tf.cast(vectorsN, dtype=tf.bfloat16)
-        print(14)
-        self.vectors = tf.concat((self.vectors, vectorsN), axis=0)
-        print(15)
-        print('Index now has {} vectors on {}'.format(
-            self.vectors.shape[0], self.worker))
-        print(16)
+        with tf.device(self.worker):
+            vectorsN = tf.cast(vectorsN, dtype=tf.bfloat16)
+            print(14)
+            self.vectors = tf.concat((self.vectors, vectorsN), axis=0)
+            print(15)
+            print('Index now has {} vectors on {}'.format(
+                self.vectors.shape[0], self.worker))
+            print(16)
 
     @tf.function
     def search(self, query_vector, top_k=20):
