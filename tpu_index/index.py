@@ -12,23 +12,22 @@ except ValueError:
 
 class Index:
     def __init__(self, vectors, worker):
-        vectors
-        self.embeddings = tf.cast(vectors, dtype=tf.bfloat16)
+        self.vectors = tf.cast(vectors, dtype=tf.bfloat16)
         self.worker = worker
         print('Building index with {} vectors on {}'.format(
-            self.embeddings.shape[0], worker))
+            self.vectors.shape[0], worker))
         
-    def appendEmbeds(self, vectors):
-        newEmbeds = tf.cast(vectors, dtype=tf.bfloat16)
-        self.embeddings = tf.concat((self.embeddings, newEmbeds), axis=0)
+    def appendEmbeds(self, vectorsN):
+        vectorsN = tf.cast(vectorsN, dtype=tf.bfloat16)
+        self.vectors = tf.concat((self.vectors, vectorsN), axis=0)
         print('Index now has {} vectors on {}'.format(
-            self.embeddings.shape[0], worker))
+            self.vectors.shape[0], worker))
 
     @tf.function
     def search(self, query_vector, top_k=20):
         with tf.device(self.worker):
             dot_product = tf.reduce_sum(tf.multiply(
-                self.embeddings, query_vector), axis=1)
+                self.vectors, query_vector), axis=1)
             distances = 1 - dot_product
             sorted_indices = tf.argsort(distances)
             nearest_distances = tf.cast(tf.gather(distances, sorted_indices), dtype=tf.float32)
