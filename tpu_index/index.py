@@ -48,6 +48,7 @@ class TPUIndex:
         self.normalized_vectors = normalize
         self.vecs_per_index = vectors.shape[0] // len(self.workers)
 
+
         numToAdd = len(self.workers) - (vectors.shape[0] % len(self.workers))
         if not( numToAdd == 0 or numToAdd == 8):
             toAddZeros = np.zeros_like(vectors[-numToAdd:])
