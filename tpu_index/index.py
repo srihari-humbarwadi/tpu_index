@@ -48,7 +48,7 @@ class TPUIndex:
         self.normalized_vectors = normalize
         self.vecs_per_index = vectors.shape[0] // len(self.workers)
 
-        numToAdd = vectors.shape[0] % len(self.workers)
+        numToAdd = len(self.workers) - (vectors.shape[0] % len(self.workers))
         if numToAdd > 0:
             toAddZeros = np.zeros_like(vectors[-numToAdd:])
             vectors = np.concatenate((vectors, toAddZeros), axis=0)
@@ -66,7 +66,7 @@ class TPUIndex:
         self.normalized_vectors = normalize
         self.vecs_per_index = self.vecs_per_index + (vectors.shape[0] // len(self.workers))
 
-        numToAdd = vectors.shape[0] % len(self.workers)
+        numToAdd = len(self.workers) - (vectors.shape[0] % len(self.workers))
         if numToAdd > 0:
             toAddZeros = tf.zeros_like(vectors[-numToAdd:])
             vectors = tf.concat((vectors, toAddZeros), axis=0)
