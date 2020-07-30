@@ -1,6 +1,9 @@
 import numpy as np
 import tensorflow as tf
 
+tf.debugging.set_log_device_placement(True) 
+
+
 try:
     tpu = tf.distribute.cluster_resolver.TPUClusterResolver()
     tf.config.experimental_connect_to_cluster(tpu)
