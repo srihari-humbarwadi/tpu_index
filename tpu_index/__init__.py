@@ -1,3 +1,3 @@
-from .index import TPUIndex
+from .index import TPUIndex, TPUHostIndex
 
-__all__ = ['TPUIndex']
+__all__ = ['TPUIndex', 'TPUHostIndex']
