@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name='tpu_index',
-    version='0.0.4',
+    version='0.0.6',
     author='Srihari Humbarwadi',
     author_email='sriharihumbarwadi97@gmail.com',
     description='TPU index is a package for fast similarity search over large collections of high dimension vectors on Google Cloud TPUs',
