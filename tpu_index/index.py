@@ -83,3 +83,9 @@ class TPUIndex:
         Dx = np.array(Dx)[id_sorted]
         Ix = np.array(Ix)[id_sorted]
         return Dx, Ix
+
+
+class TPUHostIndex(Index):
+    def __init__(self, vectors, host_device='/job:worker/replica:0/task:0/device:CPU:0'):
+        with tf.device(host_device):
+            super(TPUHostIndex, self).__init__(vectors, host_device)
