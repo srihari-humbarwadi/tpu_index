@@ -1,4 +1,3 @@
-[![HitCount](http://hits.dwyl.io/srihari-humbarwadi/tpu_index.svg)](http://hits.dwyl.io/srihari-humbarwadi/tpu_index)
 
 ## TPU Index
 
